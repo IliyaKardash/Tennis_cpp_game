@@ -64,6 +64,7 @@ simulate_game(Input* input, float dt) {
 			ball_p_y + ball_half_size < player_1_p + player_half_size_y) {
 			ball_p_x = 80 - player_half_size_x - ball_half_size;
 			ball_dp_x *= -1;
+			ball_dp_y = (ball_dp_y - player_1_p)*2;
 		}
 		else if (ball_p_x + ball_half_size > -80 - player_half_size_x &&
 			ball_p_x - ball_half_size < -80 + player_half_size_x &&
@@ -71,7 +72,30 @@ simulate_game(Input* input, float dt) {
 			ball_p_y + ball_half_size < player_2_p + player_half_size_y) {
 			ball_p_x = -80 + player_half_size_x + ball_half_size;
 			ball_dp_x *= -1;
+			ball_dp_y = (ball_dp_y - player_2_p) * 2;
 		}
+
+		if (ball_p_y + ball_half_size > arena_half_size_y) {
+			ball_p_y = arena_half_size_y - ball_half_size;
+			ball_dp_y *= -.5;
+		}
+		else if (ball_p_y - ball_half_size < -arena_half_size_y) {
+			ball_p_y = -arena_half_size_y + ball_half_size;
+			ball_dp_y *= -.5;
+		}
+
+		if (ball_p_x - ball_half_size > arena_half_size_x) {
+			ball_dp_x *= -1;
+			ball_dp_y = 0;
+			ball_p_x = 0;
+			ball_p_y = 0;
+		}
+		else if (ball_p_x - ball_half_size < -arena_half_size_x) {
+				ball_dp_x *= -1;
+				ball_dp_y = 0;
+				ball_p_x = 0;
+				ball_p_y = 0;
+			}
 		draw_rect(80, player_1_p, player_half_size_x, player_half_size_y, 0xff0000);
 		draw_rect(-80, player_2_p, player_half_size_x, player_half_size_y, 0x00ff22);
 }
