@@ -1,8 +1,11 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include "utils.cpp"
+
 
 global_variable bool running = true;
 global_variable bool is_resizing = false;
+
+HWND g_hwnd = nullptr;
 
 struct Render_State {
 	int height, width;
@@ -75,6 +78,12 @@ LRESULT CALLBACK window_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			resize_render_state(width, height);
 			return 0;
 		}
+		case WM_PAINT:
+		{
+			PAINTSTRUCT ps;
+			BeginPaint(hwnd, &ps);
+			EndPaint(hwnd, &ps);
+		}
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
@@ -93,8 +102,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// create window
 
-	HWND window = CreateWindow(window_class.lpszClassName, L"My First Game", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, 0, hInstance, 0);
-	HDC hdc = GetDC(window);
+	g_hwnd = CreateWindow(window_class.lpszClassName, L"My First Game", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, 0, hInstance, 0);
+	HDC hdc = GetDC(g_hwnd);
 
 	Input input = {};
 
@@ -117,7 +126,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		for (int i = 0; i < BUTTON_COUNT; i++) {
 			input.buttons[i].changed = false;
 		}
-		while (PeekMessage(&message, window, 0, 0, PM_REMOVE)) {
+		while (PeekMessage(&message, g_hwnd, 0, 0, PM_REMOVE)) {
 
 			switch (message.message) {
 				case WM_KEYUP:
